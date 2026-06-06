@@ -35,7 +35,7 @@ def load_oil(data_dir: str = DATA_DIR) -> pd.Series:
     oil["date"] = pd.to_datetime(oil["date"])
     oil = oil.set_index("date").squeeze()
     oil = oil.sort_index()
-    oil = oil.ffill()
+    oil = oil.ffill().bfill()
     return oil
 
 
@@ -105,7 +105,7 @@ def build_holiday_df(
 
         h = {
             "holiday": row["description"],
-            "ds": row["date"],
+            "ds": pd.to_datetime(row["date"]),
             "lower_window": 0,
             "upper_window": 0,
         }
