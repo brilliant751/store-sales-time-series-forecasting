@@ -22,6 +22,9 @@ logs/
 .cursor/
 .atomcode/
 
+# Data (raw CSV files, not tracked in git)
+data/
+
 # Python
 __pycache__/
 *.pyc
