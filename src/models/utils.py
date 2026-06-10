@@ -4,38 +4,62 @@ src/models/utils.py
 """
 import numpy as np
 import pandas as pd
-from typing import Dict, Tuple, Optional
+from typing import Dict, List, Tuple, Optional
 
 DATA_DIR = "data"
+PROCESSED_DIR = f"{DATA_DIR}/processed"
 
 
 def load_time_series(
-    store_nbr: int, family: str, data_dir: str = DATA_DIR
+    store_nbr: int,
+    family: str,
+    cols: List[str] = None,
+    data_dir: str = PROCESSED_DIR,
 ) -> pd.DataFrame:
     """
-    从 train.csv 加载单个 (store, family) 时序序列。
+    从 feature_dataset.csv 加载单个 (store, family) 时序序列。
 
-    返回 DataFrame，列: ['sales', 'onpromotion']
-    date 解析为 datetime 并设为 index。
+    Parameters
+    ----------
+    store_nbr : int
+        门店编号
+    family : str
+        商品家族名称
+    cols : list, optional
+        要选择的列（默认: ['sales', 'onpromotion', 'oil_price',
+                          'transactions', 'is_holiday', 'is_event']）
+    data_dir : str
+        处理后数据目录
+
+    返回 DataFrame，date 设为 index。
+    仅返回 dataset_split='train' 的记录（含真实 sales）。
     """
-    train = pd.read_csv(f"{data_dir}/train.csv")
-    mask = (train["store_nbr"] == store_nbr) & (train["family"] == family)
-    series = train[mask][["date", "sales", "onpromotion"]].copy()
+    if cols is None:
+        cols = ["sales", "onpromotion", "oil_price",
+                "transactions", "is_holiday", "is_event"]
+
+    df = pd.read_csv(f"{data_dir}/feature_dataset.csv")
+    mask = (
+        (df["store_nbr"] == store_nbr)
+        & (df["family"] == family)
+        & (df["dataset_split"] == "train")
+    )
+    series = df[mask][["date"] + cols].copy()
     series["date"] = pd.to_datetime(series["date"])
     series = series.sort_values("date").set_index("date")
     return series
 
 
-def load_oil(data_dir: str = DATA_DIR) -> pd.Series:
+def load_oil(data_dir: str = PROCESSED_DIR) -> pd.Series:
     """
-    加载油价数据，返回 date 为索引的 Series。
-    缺失值向前填充。
+    从 feature_dataset 提取油价序列。
+    返回 date 为索引的 Series。
     """
-    oil = pd.read_csv(f"{data_dir}/oil.csv")
-    oil["date"] = pd.to_datetime(oil["date"])
-    oil = oil.set_index("date").squeeze()
+    df = pd.read_csv(f"{data_dir}/feature_dataset.csv",
+                     usecols=["date", "oil_price"])
+    oil = df.drop_duplicates("date").set_index("date").squeeze()
+    oil.index = pd.to_datetime(oil.index)
     oil = oil.sort_index()
-    oil = oil.ffill().bfill()
     return oil
 
 

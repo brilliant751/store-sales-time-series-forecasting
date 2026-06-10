@@ -16,7 +16,8 @@ class ProphetModel:
     自动集成：
     - 厄瓜多尔节假日表
     - onpromotion 作为额外回归量
-    - 油价 (dcoilwtico) 作为额外回归量
+    - 油价 (oil_price) 作为额外回归量
+    - 其他特征通过 extra_regressors 指定
     """
 
     def __init__(
@@ -98,29 +99,26 @@ class ProphetModel:
     def prepare_data(
         self,
         series: pd.DataFrame,
-        oil_series: pd.Series = None,
     ) -> pd.DataFrame:
         """
-        将我们的时序数据转为 Prophet 所需的格式。
+        将时序数据转为 Prophet 所需的格式。
 
         Parameters
         ----------
         series : pd.DataFrame
-            包含 'sales' 和 'onpromotion' 列，date 为 index
-        oil_series : pd.Series, optional
-            油价数据
+            包含 'sales' 和 extra_regressors 列，date 为 index
+            （来自 load_time_series 的输出，已含油价等特征）
 
         Returns
         -------
         pd.DataFrame: 包含 'ds', 'y' 和 extra_regressors
         """
-        df = series.reset_index()[["date", "sales", "onpromotion"]].rename(
-            columns={"date": "ds", "sales": "y"}
-        )
-        if oil_series is not None and "dcoilwtico" in self.extra_regressors:
-            oil_df = oil_series.reset_index()
-            oil_df.columns = ["ds", "dcoilwtico"]
-            oil_df["ds"] = pd.to_datetime(oil_df["ds"])
-            df = df.merge(oil_df, on="ds", how="left")
-            df["dcoilwtico"] = df["dcoilwtico"].ffill()
+        cols = ["date", "sales"] + self.extra_regressors
+        avail = [c for c in cols if c in series.columns or c in ("date", "sales")]
+        rename_map = {"date": "ds", "sales": "y"}
+        df = series.reset_index()[avail].rename(columns=rename_map)
+        # extra_regressors 中不在 series 里的列设为 0
+        for reg in self.extra_regressors:
+            if reg not in df.columns:
+                df[reg] = 0.0
         return df
