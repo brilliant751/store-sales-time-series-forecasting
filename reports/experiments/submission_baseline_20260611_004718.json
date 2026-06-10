@@ -1,0 +1,14 @@
+{
+  "experiment": "submission_baseline",
+  "model": "SeasonalNaive",
+  "params": {
+    "period": 7
+  },
+  "metrics": {},
+  "runtime_seconds": 5.71,
+  "timestamp": "2026-06-11T00:47:18.960894",
+  "extra": {
+    "n_sequences": 30,
+    "output": "output/predictions_sample.csv"
+  }
+}

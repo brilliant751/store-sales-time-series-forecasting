@@ -1,0 +1,17 @@
+{
+  "experiment": "baseline_all_sequences",
+  "model": "SeasonalNaive",
+  "params": {
+    "period": 7
+  },
+  "metrics": {
+    "rmsle_mean": 0.3783285159049456
+  },
+  "runtime_seconds": 72.6,
+  "timestamp": "2026-06-11T00:44:29.548086",
+  "extra": {
+    "n_sequences": 20,
+    "output_csv": "output/baseline_results.csv",
+    "metric_details": "output/baseline_results.csv"
+  }
+}
