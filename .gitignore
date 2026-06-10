@@ -22,6 +22,12 @@ logs/
 .cursor/
 .atomcode/
 
+# Data (raw CSV files, not tracked in git)
+data/
+
+# Worktrees
+project-asp-worktree/
+
 # Python
 __pycache__/
 *.pyc
