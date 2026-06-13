@@ -52,17 +52,24 @@ def plot_feature_importance(importance_df, title, output_path, top_n=20):
     plt.close()
 
 def plot_metrics_comparison(metrics_dict, output_path):
-    metrics_df = pd.DataFrame(metrics_dict).T
-    metrics_df = metrics_df.reset_index().rename(columns={'index': 'Model'})
-    
-    plt.figure(figsize=(12, 6))
-    metrics_df.plot(kind='bar', x='Model', y=['RMSLE', 'MAE', 'RMSE'], figsize=(12, 6))
-    plt.title('Model Performance Comparison')
-    plt.ylabel('Metric Value')
-    plt.xticks(rotation=45)
-    plt.tight_layout()
-    plt.savefig(output_path, dpi=300)
-    plt.close()
+    metrics_df = pd.DataFrame(metrics_dict).T.reset_index().rename(columns={'index': 'Model'})
+    metric_names = ['RMSLE', 'MAE', 'RMSE']
+    models = metrics_df['Model'].tolist()
+    colors = ['#4C78A8', '#F58518', '#54A24B']
+
+    fig, axes = plt.subplots(1, 3, figsize=(18, 5), sharey=False)
+    for ax, metric, color in zip(axes, metric_names, colors):
+        values = metrics_df[metric].tolist()
+        ax.bar(models, values, color=color)
+        ax.set_title(metric)
+        ax.set_xlabel('Model')
+        ax.set_ylabel('Value')
+        ax.tick_params(axis='x', rotation=30)
+
+    fig.suptitle('Model Performance Comparison', y=1.02)
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=300, bbox_inches='tight')
+    plt.close(fig)
 
 def generate_comparison_report(models_metrics, output_path):
     report = "# Model Comparison Report\n\n"

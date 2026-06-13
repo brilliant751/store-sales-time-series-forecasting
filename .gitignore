@@ -6,8 +6,11 @@ node_modules/
 build/
 dist/
 
-# Logs
+# Logs and runtime output
 logs/
+output/
+outputs/
+reports/experiments/
 *.log
 
 # Environment variables
@@ -22,12 +25,6 @@ logs/
 .cursor/
 .atomcode/
 
-# Data (raw CSV files, not tracked in git)
-data/
-
-# Worktrees
-project-asp-worktree/
-
 # Python
 __pycache__/
 *.pyc
@@ -35,12 +32,30 @@ __pycache__/
 *.pyd
 venv/
 .venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
-# data
-data
-# Project data
-store-sales-time-series-forecasting/
-
-# Generated artifacts
+# Data pipeline artifacts
+data/processed/
 data_pipeline/outputs/
+
+# Raw data and large local datasets
+data/
+
+# Notebooks and docs
+notebooks/
+docs/
+*.ipynb
+
+# Trained models and serialized artifacts
+*.h5
+*.keras
+*.pkl
+*.pickle
+*.joblib
+*.ckpt
+*.pt
+*.onnx
 
