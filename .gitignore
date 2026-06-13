@@ -36,6 +36,8 @@ __pycache__/
 venv/
 .venv/
 
+# data
+data
 # Project data
 store-sales-time-series-forecasting/
 
