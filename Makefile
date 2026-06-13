@@ -1,4 +1,5 @@
 VENV := .venv
+PIP_FLAGS ?=
 ifeq ($(OS),Windows_NT)
 PYTHON ?= py -3
 VENV_PYTHON := $(VENV)/Scripts/python.exe
@@ -11,8 +12,7 @@ endif
 
 setup:
 	$(PYTHON) -m venv $(VENV)
-	$(VENV_PYTHON) -m pip install --upgrade pip
-	$(VENV_PYTHON) -m pip install -r requirements.txt
+	$(VENV_PYTHON) -m pip install $(PIP_FLAGS) -r requirements.txt
 
 prepare-dirs:
 	$(VENV_PYTHON) -c "import os; [os.makedirs(p, exist_ok=True) for p in ['outputs/models', 'outputs/predictions', 'outputs/figures', 'logs']]"

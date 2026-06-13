@@ -68,8 +68,9 @@ class DeepLearningModel:
         
         return model
     
-    def prepare_sequences(self, X, y):
-        X_scaled = self.scaler.fit_transform(X)
+    def prepare_sequences(self, X, y, fit=True):
+        X_scaled = self.scaler.fit_transform(X) if fit else self.scaler.transform(X)
+        X_scaled = np.asarray(X_scaled, dtype=np.float32)
         
         X_seq, y_seq = [], []
         seq_len = self.params['sequence_length']
@@ -78,17 +79,17 @@ class DeepLearningModel:
             X_seq.append(X_scaled[i-seq_len:i])
             y_seq.append(y.iloc[i])
         
-        return np.array(X_seq), np.array(y_seq)
+        return np.asarray(X_seq, dtype=np.float32), np.asarray(y_seq, dtype=np.float32)
     
     def train(self, X_train, y_train, X_val=None, y_val=None):
         n_features = X_train.shape[1]
         self.model = self.create_model(n_features)
         
-        X_train_seq, y_train_seq = self.prepare_sequences(X_train, y_train)
+        X_train_seq, y_train_seq = self.prepare_sequences(X_train, y_train, fit=True)
         
         callbacks = []
         if X_val is not None and y_val is not None:
-            X_val_seq, y_val_seq = self.prepare_sequences(X_val, y_val)
+            X_val_seq, y_val_seq = self.prepare_sequences(X_val, y_val, fit=False)
             early_stopping = EarlyStopping(
                 monitor='val_loss',
                 patience=5,
@@ -111,7 +112,7 @@ class DeepLearningModel:
         if self.model is None:
             raise ValueError("Model has not been trained yet")
         
-        X_scaled = self.scaler.transform(X)
+        X_scaled = np.asarray(self.scaler.transform(X), dtype=np.float32)
         X_seq = []
         seq_len = self.params['sequence_length']
         

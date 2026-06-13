@@ -5,9 +5,6 @@ xgboost==2.0.3
 matplotlib==3.8.4
 seaborn==0.13.2
 statsmodels==0.14.2
-prophet==1.1.5
 pytest==8.2.2
-
-# Optional deep learning stack
 tensorflow==2.15.1
 keras==2.15.0
