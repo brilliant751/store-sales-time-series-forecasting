@@ -1,7 +1,9 @@
 VENV := .venv
 ifeq ($(OS),Windows_NT)
+PYTHON ?= py -3
 VENV_PYTHON := $(VENV)/Scripts/python.exe
 else
+PYTHON ?= python3
 VENV_PYTHON := $(VENV)/bin/python
 endif
 
