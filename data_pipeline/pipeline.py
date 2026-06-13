@@ -45,6 +45,6 @@ def run_pipeline(config: PipelineConfig) -> dict[str, Any]:
 
 def default_config(project_root: Path) -> PipelineConfig:
     return PipelineConfig(
-        raw_data_dir=project_root / "store-sales-time-series-forecasting",
-        output_dir=project_root / "data_pipeline" / "outputs",
+        raw_data_dir=project_root / "data",
+        output_dir=project_root / "data" / "processed",
     )
