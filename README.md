@@ -87,3 +87,67 @@ python -m src.models.train_all --rolling
 - `outputs/figures/model_comparison.png`：三模型对比图
 - `outputs/model_comparison_report.md`：三模型对比报告
 - `reports/experiments/`：实验日志
+
+## 训练与可视化
+
+训练模型时会自动生成可视化图表（默认启用）：
+
+```bash
+# 训练所有模型并生成可视化（默认行为）
+python -m src.models.train_all
+
+# 训练并跳过可视化
+python -m src.models.train_all --no-visualize
+
+# 单独生成可视化（使用真实数据）
+python -m src.evaluation.visualization
+
+# 可视化支持的参数
+python -m src.evaluation.visualization --store 1 --family "GROCERY I"
+python -m src.evaluation.visualization --start-date 2017-01-01 --end-date 2017-06-30
+```
+
+### 可视化图表
+
+#### 静态图表（保存到 `output/figures/`）
+
+| 图表文件 | 说明 |
+|----------|------|
+| `sales_history.png` | 销售历史折线图 |
+| `model_comparison.png` | XGBoost、LSTM、GRU模型性能对比柱状图 |
+| `metrics_radar.png` | 模型性能雷达图 |
+| `store_sales_bar.png` | 商店销售额柱状图 |
+| `family_sales_bar.png` | 商品类别销售额柱状图 |
+| `store_family_heatmap.png` | 商店-商品类别热力图 |
+| `metrics_heatmap.png` | 模型指标热力图 |
+| `sales_boxplot.png` | 销售分布箱线图 |
+| `prediction_scatter.png` | 预测值与真实值散点图 |
+| `residual_distribution.png` | 残差分布图 |
+| `predicted_sales_timeseries.png` | 预测销售量时间序列图 |
+| `predicted_sales_distribution.png` | 预测销售量分布图 |
+| `predicted_sales_by_family.png` | 各商品类别预测销售量对比图 |
+
+#### 交互式图表（保存到 `output/interactive/`）
+
+| 图表文件 | 说明 |
+|----------|------|
+| `sales_history_interactive.html` | 交互式销售历史图（支持时间范围选择） |
+| `model_comparison_interactive.html` | 交互式模型对比图（支持指标切换） |
+| `heatmap_interactive.html` | 交互式热力图（支持数据筛选） |
+
+### 评估指标
+
+- **RMSLE**（均方根对数误差）- 主要评估指标
+- **MAE**（平均绝对误差）
+- **RMSE**（均方根误差）
+- **MAPE**（平均绝对百分比误差）
+- **R²**（决定系数）
+
+### 模型对比
+
+可视化脚本会自动对比以下三个模型：
+- **XGBoost** - 梯度提升树模型
+- **LSTM** - 长短期记忆网络
+- **GRU** - 门控循环单元
+
+评估报告自动保存到 `output/evaluation_report.md`

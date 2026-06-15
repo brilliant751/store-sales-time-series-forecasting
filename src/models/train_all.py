@@ -431,7 +431,7 @@ def run_rolling_validation(
     return df
 
 
-def compare_models(metrics_history: dict[str, dict[str, float]]) -> None:
+def compare_models(metrics_history: dict[str, dict[str, float]], run_viz: bool = True) -> None:
     if len(metrics_history) < 2:
         return
     from src.evaluation.evaluator import ModelEvaluator
@@ -445,6 +445,24 @@ def compare_models(metrics_history: dict[str, dict[str, float]]) -> None:
     best_model, best_metrics = evaluator.get_best_model()
     print(f"Best model: {best_model}")
     print(f"Best metrics: {best_metrics}")
+
+    # 调用增强版可视化
+    if run_viz:
+        run_enhanced_visualization(metrics_history)
+
+
+def run_enhanced_visualization(metrics_history: dict[str, dict[str, float]]) -> None:
+    """运行增强版可视化脚本"""
+    print("\n" + "=" * 60)
+    print("Running Enhanced Visualization...")
+    print("=" * 60)
+    try:
+        from src.evaluation.visualization import run_visualization
+        # 使用真实实验数据生成可视化
+        run_visualization(data_dir=Path("."), use_synthetic=False)
+    except Exception as e:
+        print(f"Visualization skipped: {e}")
+    print("=" * 60)
 
 
 def main() -> None:
@@ -470,7 +488,12 @@ def main() -> None:
     )
     parser.add_argument("--xgb-rounds", type=int, default=300, help="Number of XGBoost boosting rounds.")
     parser.add_argument("--dl-sequences", type=int, default=10, help="Number of store/family sequences for LSTM/GRU.")
+    parser.add_argument("--visualize", action="store_true", default=True, help="Generate visualization charts after training.")
+    parser.add_argument("--no-visualize", action="store_true", help="Skip visualization generation.")
     args = parser.parse_args()
+
+    # 控制是否运行可视化
+    run_viz = args.visualize and not args.no_visualize
 
     project_root = Path(__file__).resolve().parents[2]
     processed_dir = args.processed_dir or (project_root / "data" / "processed")
@@ -527,7 +550,7 @@ def main() -> None:
             n_sequences=args.dl_sequences,
         )
 
-    compare_models(metrics_history)
+    compare_models(metrics_history, run_viz=run_viz)
     print("\nPipeline completed successfully!")
 
 
